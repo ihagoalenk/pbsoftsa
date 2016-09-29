@@ -8,11 +8,13 @@ include 'query.php';
 include 'reserva.php';
 include 'notificacao.php';
 include 'ocorrencia.php';
+include 'fale-conosco.php';
 $connection = new Connection();
 $query = new Query();
 $reserva = new Reserva();
 $notificacao = new Notificacao();
 $ocorrencia = new Ocorrencia();
+$faleConosco = new FaleConosco();
 //header('Content-Type: application/json');
 
 if(!isset($_SERVER['HTTP_PATH'])){
@@ -116,6 +118,37 @@ if($_SERVER['REQUEST_METHOD'] == "GET" && base64_decode($_SERVER['HTTP_PATH']) =
   $hourEnd = ($_SERVER['HTTP_HOUREND']);
   $id_area_pai = ($_SERVER['HTTP_IDAREAPAI']);
   $reserva->makeBooking($login, $dataInicio, $dataFim, $hourStart, $hourEnd, $numero_imovel, $id_bloco, $id_areacomum, $id_area_pai);
+}else if($_SERVER['REQUEST_METHOD'] == "GET" && base64_decode($_SERVER['HTTP_PATH']) == "getFaleConosco"){
+  $numero_imovel = base64_decode($_SERVER['HTTP_NRIMOVEL']);
+  $id_bloco = base64_decode($_SERVER['HTTP_IDBLOCO']);
+  $sql = $faleConosco->getFaleConoscoSql($id_bloco, $numero_imovel);
+  $result = $connection->Query($sql);
+  $resultFinal = $faleConosco->getFaleConoscoJson($result);
+  echo base64_encode($resultFinal);
+}else if($_SERVER['REQUEST_METHOD'] == "GET" && base64_decode($_SERVER['HTTP_PATH']) == "getFaleConoscoFeedback"){
+  //echo $login = base64_decode($_SERVER['HTTP_LOGIN']);
+  $id_bloco = base64_decode($_SERVER['HTTP_IDBLOCO']);
+  $numero_imovel = base64_decode($_SERVER['HTTP_NRIMOVEL']);
+  $sql = $query->getFaleConoscoFeedbackSql($id_bloco, $numero_imovel);
+  $result = $connection->Query($sql);
+  $resultFinal = $query->getFaleConoscoFeedbackJson($result);
+  echo base64_encode($resultFinal);
+}else if($_SERVER['REQUEST_METHOD'] == "GET" && base64_decode($_SERVER['HTTP_PATH']) == "getTipoMsgFaleConosco"){
+  $result = $faleConosco->getTipoFaleConoscoJson();
+  echo base64_encode($result);
+}else if($_SERVER['REQUEST_METHOD'] == "POST" && base64_decode($_SERVER['HTTP_PATH']) == "novoFaleConosco"){
+  $dt_mensagem = base64_decode($_SERVER['HTTP_DTMENSAGEM']);
+  $id_bloco = base64_decode($_SERVER['HTTP_IDBLOCO']);
+  $numero_imovel = base64_decode($_SERVER['HTTP_NRIMOVEL']);
+  $email = base64_decode($_SERVER['HTTP_EMAIL']);
+  $tp_mensagem = base64_decode($_SERVER['HTTP_TPMENSAGEM']);
+  //$de_mensagem = ($_SERVER['HTTP_MENSAGEM']);
+  //$st_visto = ($_SERVER['HTTP_STVISTO']);
+  //$feedback = ($_SERVER['HTTP_FEEDBACK']);
+  //$telefone = ($_SERVER['HTTP_TELEFONE']);
+  //$st_ticket = ($_SERVER['HTTP_TICKET']);
+  $faleConosco->cadastrarFaleConosco($dt_mensagem, $id_bloco, $numero_imovel, $email, $tp_mensagem);
 }
+
 
 ?>
