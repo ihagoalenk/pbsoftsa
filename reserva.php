@@ -89,7 +89,7 @@ class Reserva{
       $sqlVerifyBookingInDate = "SELECT count(idevento) FROM reserva_area_comum WHERE (id_bloco = $id_bloco and
         id_numero_imovel = $id_numero_imovel and dt_data = '$dt_data' and status <> 'cancelado')";
       $resultVerifyBookingInDate = $this->getResultOnly($sqlVerifyBookingInDate);
-      return $resultVerifyBookingInDate[0] == 0 ? false : true;
+      return $resultVerifyBookingInDate[0] == 0 ? true : false;
     }else{
       return true;
     }

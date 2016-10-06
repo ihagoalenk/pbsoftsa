@@ -208,5 +208,35 @@ class Query{
 
     }
 
+    //FUNCAO PARA PEGAR AS MENSAGENS DO FALE CONOSCO
+    function getFeedbackFaleConoscoSql($id_fale_conosco){
+
+      return $sql = "SELECT  
+             ff.de_mensagem, 
+             ff.dt_feedback
+          FROM 
+             feedback_fale_conosco  ff
+          WHERE id_fale_conosco = $id_fale_conosco
+          ORDER BY dt_feedback desc";
+
+    }
+
+    //MENSAGENS DO FEEDBACK DO FALE CONOSCO
+    function getFeedbackFaleConoscoJson($result) {
+      $retorno = mysql_num_rows($result);
+
+      if($retorno == 0 ){
+        $resultado[] = array("error" => true, "description: " => "não encontrado!");
+        return json_encode($resultado);
+      }else{
+        while($consulta = mysql_fetch_array($result)) {
+          $resultado[] = array("de_mensagem" => $consulta[0],
+          "dt_feedback" => $consulta[1], "error" => false);
+        }
+        return json_encode($resultado);
+      }
+
+    }
+
 }
 ?>
